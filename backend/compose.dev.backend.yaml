@@ -1,0 +1,25 @@
+services:
+  db:
+    image: mysql
+    container_name: mysql_db     # Apunta al Dockerfile de la carpeta db/
+    env_file:
+      - ../db/.env                 # Variables de MYSQL_… definidas en db/.env
+    ports:
+      - "3308:3306"
+    volumes:
+      - ../db/data:/var/lib/mysql
+
+  backend:
+    container_name: myapp_backend
+    build:
+      context: .
+      dockerfile: dev.Dockerfile       # Tu Dockerfile de Laravel/Node/etc.
+    env_file:
+      - .env                       # Variables propias del backend (DB_HOST=db,…)
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/var/www/html:cached     # Código fuente
+      - /var/www/html/vendor

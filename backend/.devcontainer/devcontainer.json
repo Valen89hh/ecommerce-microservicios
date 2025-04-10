@@ -1,0 +1,27 @@
+{
+	"name": "Laravel Backend Dev",
+	"dockerComposeFile": "../compose.dev.backend.yaml",
+	"service": "backend",
+	"workspaceFolder": "/var/www/html",
+	"customizations": {
+	  "vscode": {
+		"settings": {
+			"terminal.integrated.defaultProfile.linux": "bash",
+			"php.validate.executablePath": "/usr/local/bin/php"
+		},
+		"extensions": [
+			"ms-azuretools.vscode-docker",
+			"bmewburn.vscode-intelephense-client",
+			"esbenp.prettier-vscode",
+			"dbaeumer.vscode-eslint",
+			"amiralizadeh9480.laravel-extra-intellisense",
+			"onecentlin.laravel-blade"
+		]
+	  }
+	},
+	"forwardPorts": [8000, 3308],
+	"postCreateCommand": "echo 'Backend listo!'",
+	"remoteUser": "root"
+  }
+
+  

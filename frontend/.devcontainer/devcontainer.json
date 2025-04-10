@@ -1,0 +1,28 @@
+{
+	"name": "Frontend Dev",
+	"dockerComposeFile": "../compose.dev.frontend.yaml",
+	"service": "frontend",
+	"workspaceFolder": "/app",
+	"customizations": {
+	  "vscode": {
+		"settings": {
+			"terminal.integrated.defaultProfile.linux": "bash"
+		},
+		"extensions": [
+			"ms-azuretools.vscode-docker",
+			"bmewburn.vscode-intelephense-client",
+			"esbenp.prettier-vscode",
+			"dbaeumer.vscode-eslint",
+			"burkeholland.simple-react-snippets",
+			"bradlc.vscode-tailwindcss",
+			"dsznajder.es7-react-js-snippets",
+			"infeng.vscode-react-typescript"
+		]
+	  }
+	},
+	"forwardPorts": [3000],
+	"postCreateCommand": "echo 'Frontend listo!'",
+	"remoteUser": "node"
+  }
+
+  
