@@ -1,37 +1,30 @@
-'use client'
+"use client"
 
-import React, { useState } from "react";
-import { useAddProduct } from "./hooks/useAddProduct";
+import { Product } from "@/types/models-database";
+import { useState } from "react";
+import { useEditProduct } from "../hooks/useEditProduct";
+import { useSaveProduct } from "../hooks/useSaveProduct";
 import Link from "next/link";
 
-const ProductCreatePage = () => {
-    const [nombre, setNombre] = useState('');
-    const [descripcion, setDescripcion] = useState('');
-    const [imagen, setImagen] = useState('');
-    const [precio, setPrecio] = useState('');
+const FormEditProduct = ({
+    product
+}: { product: Product}) => {
+    const { productForm, updateField, errors, handleSubmit  } = useEditProduct(product)
+    const {loadingSaveProduct, resultSaveProduct, onSaveProduct} = useSaveProduct()
 
-    const { addProduct, loading, error, success} = useAddProduct()
-
-    const handleSubmit = async(e: React.FormEvent) => {
+    const onSubmit = async(e: React.FormEvent) => {
         e.preventDefault()
-        const proucto = {
-            name: nombre,
-            description: descripcion,
-            price: precio == '' ? 0 : Number(precio),
-            imagen: imagen
-        }
-        console.log(proucto)
-        await addProduct(proucto)
+        handleSubmit((data)=>{
+            console.log("Producto valido: ", data)
+            onSaveProduct(data)
+        })
     }
-
-
     return ( 
         <div className="min-h-screen container mx-auto px-6 py-8">
             <Link href={"/admin/products"}>Volver</Link>
+            <h1 className="text-3xl font-semibold text-gray-700 mb-6">Editar Producto</h1>
             
-            <h1 className="text-3xl font-semibold text-gray-700 mb-6">Añadir Nuevo Producto</h1>
-            
-            <form onSubmit={handleSubmit} className="space-y-6 bg-white p-8 rounded-lg shadow-lg">
+            <form onSubmit={onSubmit} className="space-y-6 bg-white p-8 rounded-lg shadow-lg">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Nombre del producto */}
                     <div>
@@ -42,10 +35,12 @@ const ProductCreatePage = () => {
                             name="name"
                             className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500"
                             placeholder="Nombre del producto"
-                            value={nombre}
-                            onChange={(e)=> setNombre(e.target.value)}
+                            value={productForm.name}
+                            onChange={(e)=> updateField("name", e.target.value)}
                             required
                         />
+                        {errors.name && <p className="text-red-500">{errors.name}</p>}
+
                     </div>
                     
                     {/* Precio */}
@@ -57,10 +52,11 @@ const ProductCreatePage = () => {
                             name="price"
                             className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500"
                             placeholder="Precio del producto"
-                            value={precio}
-                            onChange={(e)=> setPrecio(e.target.value)}
+                            value={productForm.price}
+                            onChange={(e)=> updateField("price", e.target.value)}
                             required
                         />
+                        {errors.price && <p className="text-red-500">{errors.price}</p>}
                     </div>
                 </div>
 
@@ -73,8 +69,8 @@ const ProductCreatePage = () => {
                         rows={4}
                         className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500"
                         placeholder="Descripción detallada del producto"
-                        value={descripcion}
-                        onChange={(e)=> setDescripcion(e.target.value)}
+                        value={productForm.description}
+                        onChange={(e)=> updateField("description", e.target.value)}
                         required
                     />
                 </div>
@@ -88,30 +84,36 @@ const ProductCreatePage = () => {
                         name="image"
                         className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500"
                         placeholder="https://image.example"
-                        value={imagen}
-                        onChange={(e)=> setImagen(e.target.value)}
+                        value={productForm.image}
+                        onChange={(e)=> updateField("image", e.target.value)}
                         required
                     />
                 </div>
 
                 {/* Botón de Enviar */}
-                <div className="flex justify-end">
+                <div className="flex justify-between items-center">
                     <button
                         type="submit"
-                        disabled={loading}
-                        className={`px-6 py-3 ${loading ? 'bg-gray-400' : 'bg-sky-700'} text-white font-semibold rounded-md hover:bg-sky-800 transition-colors`}
+                        disabled={loadingSaveProduct}
+                        className={`px-6 py-3 ${loadingSaveProduct ? 'bg-gray-400' : 'bg-red-700'} text-white font-semibold rounded-md hover:bg-red-800 transition-colors`}
                     >
-                        {loading ? 'Cargando...' : 'Añadir Producto'}
+                        {loadingSaveProduct ? 'Eliminado...' : 'Eliminar Producto'}
+                    </button>
+                    <button
+                        type="submit"
+                        disabled={loadingSaveProduct}
+                        className={`px-6 py-3 ${loadingSaveProduct ? 'bg-gray-400' : 'bg-sky-700'} text-white font-semibold rounded-md hover:bg-sky-800 transition-colors`}
+                    >
+                        {loadingSaveProduct ? 'Cargando...' : 'Guardar Producto'}
                     </button>
                 </div>
 
-                {error && <p className="text-red-600 mt-4">{error}</p>}
-                {success && <p className="text-green-600 mt-4">Producto añadido exitosamente</p>}
+                {(resultSaveProduct && !resultSaveProduct.success) && <p className="text-red-600 mt-4">{resultSaveProduct.error}</p>}
+                {(resultSaveProduct && resultSaveProduct.success) && <p className="text-green-600 mt-4">{resultSaveProduct.data}</p>}
                 
             </form>
         </div>
-
      );
 }
  
-export default ProductCreatePage;
+export default FormEditProduct;
