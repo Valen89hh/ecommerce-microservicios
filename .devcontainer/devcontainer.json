@@ -22,7 +22,7 @@
 	  }
 	},
 	"forwardPorts": [3000, 3008, 8000],
-	"postCreateCommand": "echo 'E-commerce listo!'",
+	"postCreateCommand": "echo 'E-commerce listo!",
 	"remoteUser": "node"
   }
 
