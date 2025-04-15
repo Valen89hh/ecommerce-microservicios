@@ -30,6 +30,12 @@ class AuthController extends Controller
             ], 422);
         }
 
+        $user = User::where('email', $request->email)->first();
+
+        if ($user && $user->authProvider->provider !== 'email') {
+            return response()->json(['message' => 'Este usuario esta authenticado con '.$user->authProvider->provider], 401);
+        }
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -59,7 +65,14 @@ class AuthController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
-        if (! $user || $user->authProvider->provider !== 'email') {
+        if(!$user){
+            return response()->json([
+                "success" => false,
+                "message" => "El usuario no existe"
+            ]);
+        }
+
+        if ($user->authProvider->provider !== 'email') {
             return response()->json(['message' => 'Este usuario esta authenticado con '.$user->authProvider->provider], 401);
         }
 
@@ -85,7 +98,7 @@ class AuthController extends Controller
         Auth::logout();
         return response()->json([
             'satus' => 'success',
-            'message' => 'Exitoso cierre de sesion'
+            'message' => 'Cierre de sesión exitoso'
         ]);
     }
 
