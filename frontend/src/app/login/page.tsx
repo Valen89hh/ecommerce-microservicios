@@ -5,6 +5,7 @@ import { FcGoogle } from "react-icons/fc";
 import { useFormLogin } from "./hooks/useFormLogin";
 import { useLoginUser } from "./hooks/useLoginUser";
 import React from "react";
+import { loginGoogle } from "./actions/login-google";
 
 const LoginPage = () => {
     const {loginForm, errors, updateField, handleSubmit} = useFormLogin()
@@ -14,6 +15,10 @@ const LoginPage = () => {
         e.preventDefault()
         handleSubmit(onLoginUser)
     }
+
+    const handleLogin = () => {
+        window.location.href = "/auth/google";
+      };
      
 
     return (
@@ -61,6 +66,7 @@ const LoginPage = () => {
 
                     <button
                         disabled={loadingLogin}
+                        onClick={handleLogin}
                         type="button"
                         className="w-full py-2 border flex items-center justify-center gap-2 rounded-md hover:bg-gray-100 transition"
                     >

@@ -1,5 +1,7 @@
 "use client"
 
+import { logoutUser } from "@/app/login/actions/logout-user";
+import { useUser } from "@/hooks/useUser";
 import { useDeleteProductModal } from "@/store/useDeleteProductModal";
 import { useProductStore } from "@/store/useProductStore";
 import { Product } from "@/types/models-database";
@@ -13,14 +15,20 @@ const TableProducts = ({
 }) => {
     const { openModal } = useDeleteProductModal()
     const { products: currentProducts, setProducts } = useProductStore();
+    const user = useUser()
 
     useEffect(() => {
         setProducts(products);
+        console.log(user)
     }, [products, setProducts]);
 
     return ( 
         <div className="min-h-screen container mx-auto px-6">
-            <div className="w-full flex justify-between items-center mt-8">
+            <div className="mt-8 flex gap-1 justify-start items-center">
+                <h2 className=" text-xl">Hola {(user && user.name) && (user.name)} --{'>'}</h2>
+                <button onClick={logoutUser}>Logout</button>
+            </div>
+            <div className="w-full flex justify-between items-center ">
                 <h1 className="text-gray-600 text-2xl font-semibold">Productos de la Tienda</h1>
                 <Link
                     href="/admin/products/create"
