@@ -27,19 +27,38 @@ services:
       - /var/www/html/vendor
     networks:
       - app-network
-  frontend:
-    container_name: frontend
+  admin:
+    container_name: admin_frontend
     build:
-      context: ./frontend
+      context: ./frontend/admin
       dockerfile: dev.Dockerfile
       target: dev
     restart: always
     env_file:
-      - ./frontend/.env
+      - ./frontend/admin/.env
     depends_on:
       - backend
     volumes:
-      - ./frontend:/app
+      - ./frontend/admin:/app
+      - /app/node_modules
+    ports:
+      - 5173:5173
+    networks:
+      - app-network
+
+  client:
+    container_name: client_frontend
+    build:
+      context: ./frontend/client
+      dockerfile: dev.Dockerfile
+      target: dev
+    restart: always
+    env_file:
+      - ./frontend/client/.env
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend/client:/app
       - /app/node_modules
       - /app/.next
     ports:

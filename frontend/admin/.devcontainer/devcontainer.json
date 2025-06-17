@@ -1,7 +1,7 @@
 {
-	"name": "Ecommerce Dev",
-	"dockerComposeFile": "../compose.dev.yaml",
-	"service": "client",
+	"name": "Frontend Dev",
+	"dockerComposeFile": "../compose.dev.frontend.admin.yaml",
+	"service": "admin",
 	"workspaceFolder": "/app",
 	"customizations": {
 	  "vscode": {
@@ -11,18 +11,18 @@
 		"extensions": [
 			"ms-azuretools.vscode-docker",
 			"bmewburn.vscode-intelephense-client",
-			"ms-python.python",
 			"esbenp.prettier-vscode",
 			"dbaeumer.vscode-eslint",
 			"burkeholland.simple-react-snippets",
 			"bradlc.vscode-tailwindcss",
 			"dsznajder.es7-react-js-snippets",
-			"infeng.vscode-react-typescript"
+			"infeng.vscode-react-typescript",
+			"bradlc.vscode-tailwindcss"
 		]
 	  }
 	},
-	"forwardPorts": [3000, 3008, 8000, 5173],
-	"postCreateCommand": "echo 'E-commerce listo!",
+	"forwardPorts": [5173],
+	"postCreateCommand": "echo 'Frontend listo!'",
 	"remoteUser": "node"
   }
 
