@@ -1,15 +1,13 @@
 services:
-  frontend:
-    container_name: frontend-app
+  client:
+    container_name: client-app
     build:
       context: .
       dockerfile: dev.Dockerfile
       target: dev
     restart: always
-    environment:
-      - NODE_ENV=development
-      - CHOKIDAR_USEPOLLING=true
-      - WATCHPACK_POLLING=true
+    env_file:
+      - .env
     volumes:
       - .:/app
       - /app/node_modules

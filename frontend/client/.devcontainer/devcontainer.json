@@ -1,7 +1,7 @@
 {
 	"name": "Frontend Dev",
-	"dockerComposeFile": "../compose.dev.frontend.yaml",
-	"service": "frontend",
+	"dockerComposeFile": "../compose.dev.frontend.client.yaml",
+	"service": "client",
 	"workspaceFolder": "/app",
 	"customizations": {
 	  "vscode": {
@@ -16,7 +16,8 @@
 			"burkeholland.simple-react-snippets",
 			"bradlc.vscode-tailwindcss",
 			"dsznajder.es7-react-js-snippets",
-			"infeng.vscode-react-typescript"
+			"infeng.vscode-react-typescript",
+			"bradlc.vscode-tailwindcss"
 		]
 	  }
 	},

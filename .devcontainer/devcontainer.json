@@ -1,7 +1,7 @@
 {
 	"name": "Ecommerce Dev",
 	"dockerComposeFile": "../compose.dev.yaml",
-	"service": "frontend",
+	"service": "client",
 	"workspaceFolder": "/app",
 	"customizations": {
 	  "vscode": {
@@ -21,7 +21,7 @@
 		]
 	  }
 	},
-	"forwardPorts": [3000, 3008, 8000],
+	"forwardPorts": [3000, 3008, 8000, 5173],
 	"postCreateCommand": "echo 'E-commerce listo!",
 	"remoteUser": "node"
   }
