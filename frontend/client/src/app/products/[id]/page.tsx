@@ -7,11 +7,9 @@ import { Button } from "@/components/ui/button";
 
 import { notFound } from 'next/navigation';
 
-type Props = {
-  params: { id: string };
-};
 
-const ProductDetailPage = async({ params }: Props) => {
+
+export default async function ProductDetailPage({ params }: { params: { id: string } }) {
     const { id } = params;
 
     const res = await fetch(`http://backend:8000/api/products/${id}`);
@@ -118,5 +116,3 @@ const ProductDetailPage = async({ params }: Props) => {
     </div>
   );
 }
-
-export default ProductDetailPage;
