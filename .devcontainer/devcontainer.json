@@ -1,7 +1,7 @@
 {
 	"name": "Ecommerce Dev",
 	"dockerComposeFile": "../compose.dev.yaml",
-	"service": "client",
+	"service": "admin",
 	"workspaceFolder": "/app",
 	"customizations": {
 	  "vscode": {

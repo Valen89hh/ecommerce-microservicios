@@ -37,3 +37,33 @@ export const hasErrorInput = [
   // ring color
   "ring-red-200 dark:ring-red-700/30",
 ]
+
+export function formatDateToString(date: Date){
+  return date.toISOString().split('T')[0];
+}
+
+export function getFileExtension(file: File): string | null {
+  const parts = file.name.split(".");
+  return parts.length > 1 ? parts.pop()?.toLowerCase() ?? null : null;
+}
+
+export function getExtensionFromPath(path: string): string | null {
+  const parts = path.split(".");
+  return parts.length > 1 ? parts.pop()?.toLowerCase() ?? null : null;
+}
+
+export function formatStatus(str: string): string {
+  return str
+    .split('_') // Divide en palabras
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()) // Capitaliza cada palabra
+    .join(' '); // Une con espacios
+}
+
+export function formatDateddMMyyy(date: Date){
+  return date.toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  });
+}
+

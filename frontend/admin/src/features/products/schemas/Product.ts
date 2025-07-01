@@ -1,3 +1,62 @@
+export interface Product{
+  id: number;
+  name: string;
+  category: {
+      id: number;
+      name: string;
+  };
+  employeeId: number;
+  shortDescription: string;
+  fullDescription: string;
+  costPrice: string;
+  salePrice: string;
+  discountedPrice: string;
+  stock: string;
+  minStock: string;
+  maxStock: string;
+  unitAmount: string;
+  availableUnits: string;
+  unitMeasurement: string;
+  weight: string;
+  length: string;
+  width: string;
+  height: string;
+  isPerishable: boolean;
+  expirationDate: Date;
+  storageType: string;
+  shippingUnit: string;  
+  createdAt: Date;
+  updatedAt: Date;
+  images: FileData[];
+  certificates: Certificate[]
+}
+
+export interface FileData{
+  id: number;
+  filePath: string;
+  fileUrl: string;
+  fileType: string;
+}
+
+export interface Certificate{
+  id: number;
+  certifyingBody: string;
+  certificateNumber: string;
+  type: string;
+  issueDate: Date;
+  expirationDate: Date;
+  files: FileData[]
+}
+
+export interface ProductTable{
+  id: number;
+  name: string;
+  categoryName: string;
+  image: string;
+  stock: number;
+  price: number;
+  status: string;
+}
 export interface ProductBasicInfo {
   name: string;
   category: string;
@@ -6,8 +65,13 @@ export interface ProductBasicInfo {
 }
 
 export interface ProductImage {
-  file: File;
+  id: string;
+  file?: File;
   previewUrl: string;
+  url?: string;
+  path?: string;
+  uploading?: boolean;
+  deleting?: boolean;
 }
 
 export interface PriceAndStockData {
@@ -29,13 +93,17 @@ export interface LogisticsInformation {
   height: string;             // Ej: "20"
   isPerishable: boolean;
   expirationDate: string;     // formato yyyy-mm-dd
-  storageType: "normal" | "small" | "big";
+  storageType: string
   shippingUnit: string;       // descripción libre
 };
 
 export interface CertificateData {
   enabled: boolean;
-  files: File[];
+  files: {
+    path: string;
+    url: string;
+    type: string;
+  }[];
   certifyingBody: string;
   certificateNumber: string;
   issueDate: string;

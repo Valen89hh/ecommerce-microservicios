@@ -1,17 +1,18 @@
-import { useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { CloudUpload, X } from "lucide-react";
 import Checkbox from "../../../components/inputs/Checkbox";
 import Heading4 from "../../../components/texts/Heading4";
-import Caption from "../../../components/texts/Caption";
 import Field from "../../../components/inputs/Field";
 import FieldDate from "../../../components/inputs/FieldDate";
-import type { CertificateData } from "../schemas/Product";
+import type { Certificate, FileData } from "../schemas/Product";
+import { useUploadManager } from "../../fileManager/hooks/useUploadManager";
+import FileUploadManager from "../../fileManager/components/FileUploadManager";
+import { useEffect, useState } from "react";
+import { formatDateToString, getExtensionFromPath } from "../../../utils/utils";
 
 interface CertificateSectionProps {
   label: string;
-  data: CertificateData;
-  onChange: (data: Partial<CertificateData>) => void;
+  data?: Certificate | null;
+  onChange: (certificate: Certificate) => void;
 }
 
 const CertificateSection:React.FC<CertificateSectionProps> = ({
@@ -19,51 +20,52 @@ const CertificateSection:React.FC<CertificateSectionProps> = ({
   data,
   onChange
 }) => {
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isDragging, setIsDragging] = useState(false);
 
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsDragging(false);
-    const droppedFiles = Array.from(e.dataTransfer.files);
-    handleFiles(droppedFiles);
-  };
+  const hook = useUploadManager({ accept: ["image/", "pdf"], initFiles: data ? data.files.map(fl=>({
+    id: fl.id.toString(),
+    previewUrl: fl.fileUrl,
+    url: fl.fileUrl,
+    path: fl.filePath,
+    type: getExtensionFromPath(fl.filePath)
+  })) : [] });
+  const [enabled, setEnabled] = useState(data != null);
+  const [certifyingBody, setCertifyingBody] = useState(data ? data.certifyingBody : "")
+  const [certificateNumber, setCertificateNumber] = useState(data ? data.certificateNumber : "")
+  const [issueDate, setIssueDate] = useState(data ? formatDateToString(data.issueDate) : "")
+  const [expirationDate, setExpirationDate] = useState(data ? formatDateToString(data.expirationDate) : "")
 
-  const handleFiles = (incomingFiles: File[]) => {
-    const validFiles = incomingFiles.filter(
-      (file) =>
-        (file.type.startsWith("image/") || file.type === "application/pdf") &&
-        file.size <= 5 * 1024 * 1024
-    );
-    onChange({ files: [...data.files, ...validFiles] });
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFiles = e.target.files;
-    if (selectedFiles) {
-      handleFiles(Array.from(selectedFiles));
+  useEffect(()=>{
+    if(hook.files.length > 0 && enabled && certifyingBody && certificateNumber && issueDate && expirationDate){
+      console.log("Cambiando Dato")
+      onChange({
+        id: data ? data.id : -1,
+        certifyingBody,
+        certificateNumber,
+        issueDate: new Date(issueDate),
+        expirationDate: new Date(expirationDate),
+        type: label,
+        files: hook.files.filter(fl=>fl.path && fl.url && fl.type).map(fl=>{
+          return {
+            id: !isNaN(Number(fl.id)) ? Number(fl.id) : -1,
+            filePath: fl.path,
+            fileUrl: fl.url,
+            fileType: fl.type
+          } as FileData
+        })
+      })
     }
-  };
-
-  const openFileDialog = () => {
-    fileInputRef.current?.click();
-  };
-
-  const removeFile = (indexToRemove: number) => {
-    onChange({ files: data.files.filter((_, index) => index !== indexToRemove) });
-  };
-
+  }, [hook.files, enabled, certifyingBody, certificateNumber, issueDate, expirationDate])
   return (
     <div className="space-y-3">
       {/* Header */}
       <div className="flex items-center gap-2 bg-card dark:bg-dark-card border border-border dark:border-dark-border rounded-lg px-2 py-3">
-        <Checkbox checked={data.enabled} onChange={() => onChange({enabled: !data.enabled})} />
+        <Checkbox checked={enabled} onChange={() => setEnabled(!enabled)} />
         <Heading4 className="text-muted dark:text-dark-muted">{label}</Heading4>
       </div>
 
       {/* Formulario animado */}
       <AnimatePresence>
-        {data.enabled && (
+        {enabled && (
           <motion.div
             key="form"
             initial={{ opacity: 0, height: 0 }}
@@ -79,107 +81,18 @@ const CertificateSection:React.FC<CertificateSectionProps> = ({
                 <Heading4 className="text-muted dark:text-dark-muted">
                   {label} Certificate *
                 </Heading4>
-                {data.files.length == 0 && (
-                  <div
-                    className={`p-8 border-dashed border rounded-lg flex flex-col items-center justify-center cursor-pointer transition-colors min-h-[200px] ${
-                      isDragging
-                        ? "border-primary bg-blue-50 dark:bg-blue-900/20"
-                        : "border-border dark:border-dark-border"
-                    }`}
-                    onClick={openFileDialog}
-                    onDragOver={(e) => {
-                      e.preventDefault();
-                      setIsDragging(true);
-                    }}
-                    onDragLeave={() => setIsDragging(false)}
-                    onDrop={handleDrop}
-                  >
-                    <input
-                      type="file"
-                      accept="image/*,application/pdf"
-                      multiple
-                      hidden
-                      ref={fileInputRef}
-                      onChange={handleChange}
-                    />
-                    <CloudUpload className="text-muted dark:text-dark-muted" size={32} />
-                    <Caption className="text-muted mt-2 dark:text-dark-muted">
-                      Drag and drop or click to upload the certificate
-                    </Caption>
-                    <Caption className="text-muted mt-1 dark:text-dark-muted font-normal text-[10px]">
-                      PDF, JPG or PNG (max. 5MB)
-                    </Caption>
-                  </div>
-                )}
-                {/* Vista previa de archivos */}
-                {data.files.length > 0 && (
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    {data.files.map((file, index) => {
-                      const isImage = file.type.startsWith("image/");
-                      const fileURL = URL.createObjectURL(file);
-
-                      return (
-                        <div
-                          key={index}
-                          className="relative group border rounded-lg overflow-hidden bg-card dark:bg-dark-card p-2"
-                        >
-                          <button
-                              className="absolute top-1 right-1 bg-black/60 rounded-full p-1 text-white hidden group-hover:block"
-                              onClick={() => removeFile(index)}
-                              title="Remove"
-                          >
-                              <X size={16}  />
-                          </button>
-
-                          {isImage ? (
-                            <img
-                              src={fileURL}
-                              alt={`Uploaded ${file.name}`}
-                              className="w-full h-32 object-cover rounded"
-                            />
-                          ) : (
-                            <div className="flex flex-col items-center justify-center h-32 text-center px-2">
-                              <span className="text-xs font-medium text-muted dark:text-dark-muted break-all">
-                                {file.name}
-                              </span>
-                              <span className="text-[10px] text-gray-500 mt-1">PDF File</span>
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                    <div
-                      className={`p-8 border-dashed border rounded-lg flex flex-col items-center justify-center cursor-pointer transition-colors ${
-                        isDragging
-                          ? "border-primary bg-blue-50 dark:bg-blue-900/20"
-                          : "border-border dark:border-dark-border"
-                      }`}
-                      onClick={openFileDialog}
-                      onDragOver={(e) => {
-                        e.preventDefault();
-                        setIsDragging(true);
-                      }}
-                      onDragLeave={() => setIsDragging(false)}
-                      onDrop={handleDrop}
-                    >
-                      <input
-                        type="file"
-                        accept="image/*,application/pdf"
-                        multiple
-                        hidden
-                        ref={fileInputRef}
-                        onChange={handleChange}
-                      />
-                      <CloudUpload className="text-muted dark:text-dark-muted" size={32} />
-                      <Caption className="text-muted mt-2 dark:text-dark-muted">
-                        Drag and drop or click to upload the certificate
-                      </Caption>
-                      <Caption className="text-muted mt-1 dark:text-dark-muted font-normal text-[10px]">
-                        PDF, JPG or PNG (max. 5MB)
-                      </Caption>
-                    </div>
-                  </div>
-                )}
+                <FileUploadManager
+                  hook={hook}
+                  renderFilePreview={(file) =>
+                    file.file?.type === "application/pdf" ? (
+                      <div className="w-[200px] h-[200px] bg-gray-200 rounded-lg flex items-center justify-center text-center text-sm">
+                        {file.file?.name}
+                      </div>
+                    ) : (
+                      <img src={file.previewUrl} className="w-[200px] h-[200px] object-cover rounded-lg" />
+                    )
+                  }
+                />
               </div>
 
 
@@ -190,8 +103,8 @@ const CertificateSection:React.FC<CertificateSectionProps> = ({
                   <Field 
                     placeholder="Name of the organization" 
                     className="bg-card dark:bg-dark-card" 
-                    value={data.certifyingBody}
-                    onChange={(e)=>onChange({certifyingBody: e.target.value})}
+                    value={certifyingBody}
+                    onChange={(e)=>setCertifyingBody(e.target.value)}
                   />
                 </div>
                 <div className="space-y-1">
@@ -199,8 +112,8 @@ const CertificateSection:React.FC<CertificateSectionProps> = ({
                   <Field 
                     placeholder="Ej: CERT-2025-001" 
                     className="bg-card dark:bg-dark-card" 
-                    value={data.certificateNumber}
-                    onChange={(e)=>onChange({certificateNumber: e.target.value})}
+                    value={certificateNumber}
+                    onChange={(e)=>setCertificateNumber(e.target.value)}
                   />
                 </div>
               </div>
@@ -210,8 +123,8 @@ const CertificateSection:React.FC<CertificateSectionProps> = ({
                   <FieldDate 
                     placeholder="yyyy-mm-dd" 
                     className="bg-card dark:bg-dark-card"
-                    value={data.issueDate}
-                    onChange={e=>onChange({issueDate: e.target.value})} 
+                    value={issueDate}
+                    onChange={e=>setIssueDate(e.target.value)} 
                   />
                 </div>
                 <div className="space-y-1">
@@ -219,8 +132,8 @@ const CertificateSection:React.FC<CertificateSectionProps> = ({
                   <FieldDate 
                     placeholder="yyyy-mm-dd" 
                     className="bg-card dark:bg-dark-card"
-                    value={data.expirationDate}
-                    onChange={e=>onChange({expirationDate: e.target.value})} 
+                    value={expirationDate}
+                    onChange={e=>setExpirationDate(e.target.value)} 
                   />
                 </div>
               </div>

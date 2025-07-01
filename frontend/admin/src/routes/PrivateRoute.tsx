@@ -13,7 +13,7 @@ const PrivateRoute = ({ allowedRoles }: PrivateRouteProps) => {
 
   if (!isAuthenticated) return <Navigate to="/login" replace />;
 
-  if (allowedRoles && (!user || !allowedRoles.includes(user.role))) {
+  if (allowedRoles && (!user || !allowedRoles.includes(user.status))) {
     return <Navigate to="/unauthorized" replace />;
   }
 

@@ -58,10 +58,10 @@ const LogisticsInformation: React.FC<Props> = ({
                     <div className="space-y-1">
                         <Heading4 className="text-muted dark:text-dark-muted">Is it a perceptible product?</Heading4>
                         <div className="w-1/2 flex">
-                            <button onClick={()=>updateField("isPerishable", true)} className={`w-full cursor-pointer border p-2 rounded-tl-sm rounded-bl-sm ${logistics.isPerishable ? "bg-primary  border-primary dark:border-dark-primary dark:bg-dark-primary" : "bg-card  border-border dark:border-dark-border dark:bg-dark-card"}`}>
+                            <button type="button" onClick={()=>updateField("isPerishable", true)} className={`w-full cursor-pointer border p-2 rounded-tl-sm rounded-bl-sm ${logistics.isPerishable ? "bg-primary  border-primary dark:border-dark-primary dark:bg-dark-primary" : "bg-card  border-border dark:border-dark-border dark:bg-dark-card"}`}>
                                 <Heading4 className={logistics.isPerishable ? "text-white dark:text-white" : "text-muted dark:text-dark-muted"}>Yes</Heading4>
                             </button>
-                            <button onClick={()=>updateField("isPerishable", false)} className={`w-full cursor-pointer border p-2 rounded-tr-sm rounded-br-sm ${!logistics.isPerishable ? "bg-primary  border-primary dark:border-dark-primary dark:bg-dark-primary" : "bg-card  border-border dark:border-dark-border dark:bg-dark-card"}`}>
+                            <button type="button" onClick={()=>updateField("isPerishable", false)} className={`w-full cursor-pointer border p-2 rounded-tr-sm rounded-br-sm ${!logistics.isPerishable ? "bg-primary  border-primary dark:border-dark-primary dark:bg-dark-primary" : "bg-card  border-border dark:border-dark-border dark:bg-dark-card"}`}>
                                 <Heading4 className={!logistics.isPerishable ? "text-white dark:text-white" : "text-muted dark:text-dark-muted"}>No</Heading4>
                             </button>
                         </div>
@@ -79,8 +79,16 @@ const LogisticsInformation: React.FC<Props> = ({
                         <Heading4 className="text-muted dark:text-dark-muted">Storage Type</Heading4>
                         <Select
                             selectedValue={logistics.storageType}
-                            onChange={value=>updateField("storageType", value as "big" | "small" | "normal")}
-                            options={[{label: "Normal", value: "normal"}, {label: "Small", value: "small"}, {label: "Big", value: "big"}]}
+                            onChange={value=>updateField("storageType", value)}
+                            
+                            options={[
+                                {label: "Refrigerated", value: "refrigerated"},
+                                {label: "Frozen", value: "frozen"},
+                                {label: "Ambient", value: "ambient"},
+                                {label: "Dry", value: "dry"},
+                                {label: "Supplement", value: "supplement"},
+                                {label: "Light Protected", value: "light_protected"},
+                            ]}
                         />
                     </div>
                 </div>

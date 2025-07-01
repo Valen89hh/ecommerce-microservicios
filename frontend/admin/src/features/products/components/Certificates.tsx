@@ -20,8 +20,10 @@ const Certificates: React.FC<Props> = ({
           <CertificateSection
             key={label}
             label={label}
-            data={certificates[label]}
-            onChange={(data) => updateCertificate(label, data)}
+            data={certificates.find(cr=>cr.type == label)}
+            onChange={(data) => {
+              updateCertificate(data, label)
+            }}
           />
         ))}
       </div>

@@ -1,40 +1,37 @@
-import { useState } from "react";
-import type { CertificateData, CertificateType } from "../schemas/Product";
+import { useEffect, useState } from "react";
+import type { Certificate } from "../schemas/Product";
 
 export interface HookCertificates{
-    certificates: Record<CertificateType, CertificateData>;
-    updateCertificate: (type: CertificateType, data: Partial<CertificateData>) => void;
+    certificates: Certificate[];
+    updateCertificate: (certificate: Certificate, type: string) => void;
+    removeCertificate: (type: string) => void
 }
 
-const initialCertificateData: CertificateData = {
-  enabled: false,
-  files: [],
-  certifyingBody: "",
-  certificateNumber: "",
-  issueDate: "",
-  expirationDate: "",
-};
 
-export const useCertificates = (): HookCertificates => {
-  const [certificates, setCertificates] = useState<Record<CertificateType, CertificateData>>({
-    Organic: { ...initialCertificateData },
-    Vegan: { ...initialCertificateData },
-    "Gluten Free": { ...initialCertificateData },
-  });
+export const useCertificates = (initCertificates: Certificate[] = []): HookCertificates => {
+  const [certificates, setCertificates] = useState<Certificate[]>(initCertificates)
 
-  const updateCertificate = (type: CertificateType, data: Partial<CertificateData>) => {
-    setCertificates((prev) => ({
-      ...prev,
-      [type]: {
-        ...prev[type],
-        ...data,
-      },
-    }));
+  const updateCertificate = (certificate: Certificate, type: string) => {
+    const ctr = certificates.find(cr=>cr.type == type)
+    if(ctr){
+      setCertificates(prev=>prev.map(cr=>cr.type != type ? cr : certificate))
+    }else{
+      setCertificates(prev=>[...prev, certificate])
+    }
   };
+
+  useEffect(()=>{
+    console.log("Cambio certificados ->>", certificates)
+  }, [certificates])
+
+  const removeCertificate = (type: string)=>{
+    setCertificates(prev=>prev.filter(cr=>cr.type != type))
+  } 
 
 
   return {
     certificates,
     updateCertificate,
+    removeCertificate,
   };
 };

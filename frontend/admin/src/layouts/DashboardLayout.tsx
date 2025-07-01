@@ -12,6 +12,7 @@ export default function DashboardLayout() {
           <Outlet />
         </main>
       </div>
+
     </div>
   );
 }

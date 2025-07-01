@@ -7,9 +7,11 @@ import ButtonSecondary from "../../../components/buttons/ButtonSecondary";
 import TableProducts from "../components/TableProducts";
 import ModalFilterProducts from "../components/ModalFilterProducts";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const ViewProductsPage = () => {
     const [isFilterModalOpen, setFilterModalOpen] = useState(false)
+    const navigate = useNavigate();
 
     return ( 
         <div className="space-y-4">
@@ -20,7 +22,7 @@ const ViewProductsPage = () => {
                         <Filter className="text-muted dark:text-dark-muted" size={20}/>
                         <Heading4 className="text-muted dark:text-dark-muted">Filter</Heading4>
                     </ButtonSecondary>
-                    <ButtonPrimary className="flex items-center gap-1">
+                    <ButtonPrimary onClick={()=>navigate("/products/create")} className="flex items-center gap-1">
                         <Plus className="text-white" size={20}/>
                         <Heading4 className="text-white">Add Product</Heading4>
                     </ButtonPrimary>

@@ -172,7 +172,7 @@ const MenuBar = () => {
                 <button className='text-muted dark:text-dark-muted' onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}>
                   <TableIcon size={20}/>
                 </button>
-                <button onClick={toggleDropdown}>
+                <button onClick={toggleDropdown} type='button'>
                   <ChevronDown className='text-muted dark:text-dark-muted' size={12}/>
                 </button>
               </div>

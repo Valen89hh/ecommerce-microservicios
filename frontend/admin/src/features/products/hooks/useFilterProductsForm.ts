@@ -1,6 +1,10 @@
 // src/app/dashboard/products/hooks/useFilterProductsForm.ts
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { FilterProductForm, FilterProductSchema } from "../schemas/FilterProductSchema";
+import { useModalFilterProductStore } from "../store/useModalFilterProductStore";
+import type { Category } from "../../categories/schemas/CategorySchema";
+import { getCategoriesFull } from "../../categories/services/categoryService";
+import { toast } from "react-toastify";
 
 const defaultValues: FilterProductForm = {
   searchName: "",
@@ -16,6 +20,26 @@ const defaultValues: FilterProductForm = {
 
 export const useFilterProductsForm = () => {
   const [filters, setFilters] = useState<FilterProductForm>(defaultValues);
+  const {setFilter} = useModalFilterProductStore()
+  const [categories, setCategories] = useState<Category[]>([])
+
+  const hasRun = useRef(false)
+  useEffect(()=>{
+
+    if (hasRun.current) return
+    hasRun.current = true
+    
+    async function initCategories() {
+      const res = await getCategoriesFull()
+      if(res.success){
+        setCategories(res.data)
+      }else{
+        toast.error(res.error.message)
+      }
+    }
+
+    initCategories()
+  }, [])
 
   const setField = <K extends keyof FilterProductForm>(
     field: K,
@@ -57,6 +81,7 @@ export const useFilterProductsForm = () => {
     }
 
     onApply(dV)
+    setFilter(dV)
   }
 
   return {
@@ -64,6 +89,7 @@ export const useFilterProductsForm = () => {
     setField,
     toggleStatus,
     reset,
+    categories,
     apply
   };
 };
