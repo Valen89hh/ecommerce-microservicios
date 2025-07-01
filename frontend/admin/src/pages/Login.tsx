@@ -1,12 +1,9 @@
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../providers/AuthProvider";
 
 const LoginPage = () => {
-    const { login } = useAuth();
     const navigate = useNavigate();
 
     const handleLogin = () => {
-        login({ id: 1, name: 'Rodrigo', role: 'admin' });
         navigate('/dashboard');
     };
 
