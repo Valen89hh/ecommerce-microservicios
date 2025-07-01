@@ -6,17 +6,17 @@ export interface HookLogisticsInformation{
     updateField: <K extends keyof LogisticsInformation>(key: K, value: LogisticsInformation[K]) => void;
 }
 
-export const useLogisticsInformation = (): HookLogisticsInformation => {
-  const [logistics, setLogistics] = useState<LogisticsInformation>({
-    weightKg: "",
-    length: "",
-    width: "",
-    height: "",
-    isPerishable: false,
-    expirationDate: "",
-    storageType: "normal",
-    shippingUnit: "",
-  });
+export const useLogisticsInformation = (initData: LogisticsInformation = {
+  weightKg: "",
+  length: "",
+  width: "",
+  height: "",
+  isPerishable: false,
+  expirationDate: "",
+  storageType: "ambient",
+  shippingUnit: "",
+}): HookLogisticsInformation => {
+  const [logistics, setLogistics] = useState<LogisticsInformation>(initData);
 
   const updateField = <K extends keyof LogisticsInformation>(key: K, value: LogisticsInformation[K]) => {
     setLogistics(prev => ({

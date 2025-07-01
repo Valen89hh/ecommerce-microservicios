@@ -26,6 +26,15 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable(); // Solo para login con email
             $table->foreignId('auth_provider_id')->constrained('auth_providers')->onDelete('restrict');
+
+            // 📦 Datos de envío
+            $table->string('phone_number')->nullable();
+            $table->string('address')->nullable();
+            $table->string('city')->nullable();
+            $table->string('region')->nullable();
+            $table->string('zip')->nullable();
+            $table->string('country')->default('PE');
+
             $table->rememberToken();
             $table->timestamps();
         });

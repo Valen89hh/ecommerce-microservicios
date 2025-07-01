@@ -6,18 +6,18 @@ export interface HookPriceAndStock {
     updateField: <K extends keyof PriceAndStockData>(field: K, value: PriceAndStockData[K]) => void;
 }
 
-export const usePriceAndStock = (): HookPriceAndStock => {
-    const [formData, setFormData] = useState<PriceAndStockData>({
-        costPrice: "",
-        salePrice: "",
-        promotionalPrice: "",
-        stock: "",
-        minStock: "",
-        maxStock: "",
-        unit: "",
-        unitAmount: "",
-        unitsAvailable: "", // este será calculado automáticamente
-    });
+export const usePriceAndStock = (initData: PriceAndStockData = {
+    costPrice: "",
+    salePrice: "",
+    promotionalPrice: "",
+    stock: "",
+    minStock: "",
+    maxStock: "",
+    unit: "u",
+    unitAmount: "",
+    unitsAvailable: "", // este será calculado automáticamente
+}): HookPriceAndStock => {
+    const [formData, setFormData] = useState<PriceAndStockData>(initData);
 
     const updateField = <K extends keyof PriceAndStockData>(field: K, value: PriceAndStockData[K]) => {
         setFormData((prev) => ({

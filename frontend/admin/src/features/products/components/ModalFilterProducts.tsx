@@ -30,14 +30,9 @@ const ModalFilterProducts: React.FC<Props> = ({
         setField,
         toggleStatus,
         reset,
-        apply
+        apply,
+        categories
     } = useFilterProductsForm();
-
-    const options = [
-        { label: "Perú", value: "PE" },
-        { label: "Colombia", value: "CO" },
-        { label: "México", value: "MX" },
-    ];
 
 
 
@@ -115,7 +110,7 @@ const ModalFilterProducts: React.FC<Props> = ({
                             <div className="grid grid-cols-2 gap-4 ">
                                 <Heading4 className="">Category:</Heading4>
                                 <Select
-                                    options={options}
+                                    options={categories.map(ct=>({label: ct.name, value: ct.id.toString()}))}
                                     selectedValue={filters.category}
                                     placeholder="Selecciona un país"
                                     onChange={(val) =>setField("category", val)}
@@ -135,8 +130,8 @@ const ModalFilterProducts: React.FC<Props> = ({
                                     />
                                     <Checkbox
                                         label="Not Available"
-                                        checked={filters.status.includes("not-available")}
-                                        onChange={() => toggleStatus("not-available")}
+                                        checked={filters.status.includes("not_available")}
+                                        onChange={() => toggleStatus("not_available")}
                                         bgCheckedColor="bg-tag-red-accent"
                                         borderCheckedColor="border-tag-red-accent"
                                         borderColor="border-tag-red-accent"
@@ -144,8 +139,8 @@ const ModalFilterProducts: React.FC<Props> = ({
                                     />
                                     <Checkbox
                                         label="Low Stock"
-                                        checked={filters.status.includes("low-stock")}
-                                        onChange={() => toggleStatus("low-stock")}
+                                        checked={filters.status.includes("low_stock")}
+                                        onChange={() => toggleStatus("low_stock")}
                                         bgCheckedColor="bg-tag-purple-accent"
                                         borderCheckedColor="border-tag-purple-accent"
                                         borderColor="border-tag-purple-accent"
@@ -153,8 +148,8 @@ const ModalFilterProducts: React.FC<Props> = ({
                                     />
                                     <Checkbox
                                         label="Out of Stock"
-                                        checked={filters.status.includes("out-of-stock")}
-                                        onChange={() => toggleStatus("out-of-stock")}
+                                        checked={filters.status.includes("out_of_stock")}
+                                        onChange={() => toggleStatus("out_of_stock")}
                                         bgCheckedColor="bg-tag-yellow-accent"
                                         borderCheckedColor="border-tag-yellow-accent"
                                         borderColor="border-tag-yellow-accent"

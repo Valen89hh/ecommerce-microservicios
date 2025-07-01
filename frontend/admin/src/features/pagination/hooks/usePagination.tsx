@@ -1,17 +1,24 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 
 export function usePagination({
   totalItems,
   pageSize = 10,
   siblingCount = 1,
   initialPage = 1,
+  controlledPage,
+  onPageChange,
 }: {
   totalItems: number;
   pageSize?: number;
   siblingCount?: number;
   initialPage?: number;
+  controlledPage?: number; // <- nuevo
+  onPageChange?: (page: number) => void; // <- nuevo
 }) {
-  const [currentPage, setCurrentPage] = useState(initialPage);
+  const isControlled = controlledPage !== undefined;
+
+  const [internalPage, setInternalPage] = useState(initialPage);
+  const currentPage = isControlled ? controlledPage : internalPage;
 
   const totalPages = Math.ceil(totalItems / pageSize);
 
@@ -28,19 +35,17 @@ export function usePagination({
     const showLeftDots = leftSiblingIndex > 2;
     const showRightDots = rightSiblingIndex < totalPages - 1;
 
-    const range = [];
+    const range: (number | string)[] = [];
 
     if (!showLeftDots && showRightDots) {
       const leftRange = Array.from({ length: 3 + 2 * siblingCount }, (_, i) => i + 1);
-      range.push(...leftRange, '...');
-      range.push(totalPages);
+      range.push(...leftRange, '...', totalPages);
     } else if (showLeftDots && !showRightDots) {
       const rightRange = Array.from(
         { length: 3 + 2 * siblingCount },
         (_, i) => totalPages - (3 + 2 * siblingCount) + i + 1
       );
-      range.push(1, '...');
-      range.push(...rightRange);
+      range.push(1, '...', ...rightRange);
     } else if (showLeftDots && showRightDots) {
       range.push(1, '...');
       for (let i = leftSiblingIndex; i <= rightSiblingIndex; i++) {
@@ -57,8 +62,20 @@ export function usePagination({
 
   const goToPage = (page: number) => {
     if (page < 1 || page > totalPages) return;
-    setCurrentPage(page);
+
+    if (isControlled) {
+      onPageChange?.(page);
+    } else {
+      setInternalPage(page);
+    }
   };
+
+  // Sync internal state with external changes (optional for fallback mode)
+  useEffect(() => {
+    if (!isControlled && initialPage !== internalPage) {
+      setInternalPage(initialPage);
+    }
+  }, [initialPage]);
 
   return {
     currentPage,

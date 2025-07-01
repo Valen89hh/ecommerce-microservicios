@@ -15,7 +15,7 @@ interface Props{
 const BasicInformation: React.FC<Props> = ({
     hook
 }) => {
-    const {formData, updateField} = hook
+    const {formData, updateField, categories} = hook
     return ( 
         <Card className="space-y-2">
             <Heading3>Basic Information</Heading3>
@@ -35,7 +35,7 @@ const BasicInformation: React.FC<Props> = ({
                         placeholder="Select Category"
                         selectedValue={formData.category}
                         onChange={(value)=>updateField("category", value)}
-                        options={[{label: "Organic", value: "8h1jia"}, {label: "Vegan", value: "jj002j"}, {label: "Snack", value: "j2099"}]}
+                        options={categories.map(ct=>({label: ct.name, value: ct.id.toString()}))}
                     />
                 </div>
                 <div className="space-y-1">

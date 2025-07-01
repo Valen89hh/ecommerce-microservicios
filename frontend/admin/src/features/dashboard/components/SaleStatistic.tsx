@@ -1,86 +1,50 @@
-import { useEffect, useState } from "react";
 import ButtonPrimary from "../../../components/buttons/ButtonPrimary";
 import Heading3 from "../../../components/texts/Heading3";
 import Card from "../../../components/ui/Card";
 import SmallText from "../../../components/texts/SmallText";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useThemeStore } from "../../../store/useThemeStore";
+import { useSaleStatistic } from "../hooks/useSaleStatistic";
+import { motion } from "framer-motion";
 
-const timeframes = ["Diary", "Weekly", "Monthly", "Yearly"]
-type SaleData = { date: string; sale: number };
-
-// Función para generar datos aleatorios de venta
-const generateSalesData = (type: string): SaleData[] => {
-  const now = new Date();
-  const data: SaleData[] = [];
-
-  const formatDate = (date: Date) =>
-    date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-
-  switch (type) {
-    case "Diary":{
-      for (let i = 6; i >= 0; i--) {
-        const d = new Date(now);
-        d.setDate(d.getDate() - i);
-        data.push({
-          date: formatDate(d),
-          sale: Math.floor(Math.random() * 2000 + 500),
-        });
-      }
-      break;
-    }
-    case "Weekly":{
-      for (let i = 6; i >= 0; i--) {
-        data.push({
-          date: `Week ${7 - i}`,
-          sale: Math.floor(Math.random() * 10000 + 3000),
-        });
-      }
-      break;
-    }
-    case "Monthly":{
-      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-      for (let i = 0; i < 6; i++) {
-        const month = months[(now.getMonth() - i + 12) % 12];
-        data.unshift({
-          date: month,
-          sale: Math.floor(Math.random() * 20000 + 5000),
-        });
-      }
-      break;
-    }
-    case "Yearly":{
-      for (let i = 5; i >= 0; i--) {
-        const year = now.getFullYear() - i;
-        data.push({
-          date: `${year}`,
-          sale: Math.floor(Math.random() * 100000 + 20000),
-        });
-      }
-      break;
-    }
-  }
-
-  return data;
-};
-
+const timeframes = ["Daily", "Weekly", "Monthly", "Yearly"]
 
 const SaleStatistic = () => {
-    const [tf, setTf] = useState(timeframes[1])
-    const [data, setData] = useState<SaleData[]>([]);
     const { theme } = useThemeStore();
+    const {sales, loading, type, setType} = useSaleStatistic();
 
-    useEffect(() => {
-        setData(generateSalesData(tf));
-    }, [tf]);
+
+    if(loading) return (
+      <motion.div
+            className="bg-muted/20 dark:bg-dark-muted/20 rounded animate-pulse"
+            initial={{ opacity: 0.3 }}
+            animate={{ opacity: [0.3, 1, 0.3] }}
+            transition={{ duration: 1.2, repeat: Infinity }}
+        >
+          <div className="flex opacity-0 justify-between ">
+              <Heading3>Sale Statistic</Heading3>
+              <div className="flex items-center gap-2">
+                  {timeframes.map(t=>(
+                      <ButtonPrimary onClick={()=>setType(t.toLowerCase())} className={`py-1 px-4 border ${type == t.toLowerCase() ? "bg-primary dark:bg-dark-primary  border-primary dark:border-dark-primary" : "bg-background dark:bg-dark-background border-border dark:border-dark-border"}`} key={t}>
+                          <SmallText className={`${type == t ? "text-white dark:text-white" : "text-muted dark:text-dark-muted"}`}>{t}</SmallText>
+                      </ButtonPrimary>
+                  ))}
+              </div>
+          </div>
+          <div className="w-full opacity-0 h-80">
+              s
+          </div>
+        </motion.div>
+    )
+
     return ( 
         <Card>
             <div className="flex justify-between ">
                 <Heading3>Sale Statistic</Heading3>
                 <div className="flex items-center gap-2">
                     {timeframes.map(t=>(
-                        <ButtonPrimary onClick={()=>setTf(t)} className={`py-1 px-4 border ${tf == t ? "bg-primary dark:bg-dark-primary  border-primary dark:border-dark-primary" : "bg-background dark:bg-dark-background border-border dark:border-dark-border"}`} key={t}>
-                            <SmallText className={`${tf == t ? "text-white dark:text-white" : "text-muted dark:text-dark-muted"}`}>{t}</SmallText>
+                        <ButtonPrimary onClick={()=>setType(t.toLowerCase())} className={`py-1 px-4 border ${type == t.toLowerCase() ? "bg-primary dark:bg-dark-primary  border-primary dark:border-dark-primary" : "bg-background dark:bg-dark-background border-border dark:border-dark-border"}`} key={t}>
+                            <SmallText className={`${type == t.toLowerCase() ? "text-white dark:text-white" : "text-muted dark:text-dark-muted"}`}>{t}</SmallText>
                         </ButtonPrimary>
                     ))}
                 </div>
@@ -88,7 +52,7 @@ const SaleStatistic = () => {
             <div className="w-full h-80">
                 <ResponsiveContainer>
                     <AreaChart
-                        data={data}
+                        data={sales}
                         margin={{
                             top: 10,
                             right: 30,

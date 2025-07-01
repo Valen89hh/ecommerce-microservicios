@@ -29,8 +29,8 @@ const Field: React.FC<Props> = ({
             {iconStart && iconStart}
 
             <input
-                {...props}
                 type="text"
+                {...props}
                 className={twMerge(
                     "outline-none w-full h-full text-text dark:text-dark-text placeholder:text-dark-muted dark:placeholder:text-muted bg-transparent",
                     className

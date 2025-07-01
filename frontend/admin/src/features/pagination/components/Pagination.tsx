@@ -1,8 +1,22 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import SmallText from "../../../components/texts/SmallText";
 import { usePagination } from "../hooks/usePagination";
+import type React from "react";
 
-const Pagination = () => {
+
+interface Props{
+  totalItems: number,
+  pageSize: number,
+  page: number,
+  onChangePage: (page: number)=>void
+}
+
+const Pagination: React.FC<Props> = ({
+  totalItems,
+  pageSize,
+  page,
+  onChangePage
+}) => {
   const {
     currentPage,
     paginationRange,
@@ -11,14 +25,16 @@ const Pagination = () => {
     totalPages,
     goToPage,
   } = usePagination({
-    totalItems: 42,
-    pageSize: 20,
+    totalItems: totalItems,
+    pageSize: pageSize,
+    controlledPage: page,
+    onPageChange: onChangePage
   });
 
   return (
     <div className="w-full flex items-center justify-between">
       <SmallText>
-        Showing {startItem} to {endItem} of 42 results
+        Showing {startItem} to {endItem} of {totalItems} results
       </SmallText>
 
       <ul className="flex items-center gap-1">
