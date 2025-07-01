@@ -20,7 +20,7 @@
 	  }
 	},
 	"forwardPorts": [8000, 3308],
-	"postCreateCommand": "echo 'Backend listo!'",
+	"postCreateCommand": "composer install",
 	"remoteUser": "root"
   }
 

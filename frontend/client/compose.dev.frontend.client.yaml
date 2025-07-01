@@ -1,0 +1,16 @@
+services:
+  client:
+    container_name: client-app
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+      target: dev
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    ports:
+      - "3000:3000"

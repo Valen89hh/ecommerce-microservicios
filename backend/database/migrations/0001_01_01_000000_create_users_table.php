@@ -11,12 +11,30 @@ return new class extends Migration
      */
     public function up(): void
     {
+
+        Schema::create('auth_providers', function (Blueprint $table) {
+            $table->id();
+            $table->string('provider')->unique(); // 'email', 'google', etc.
+            $table->timestamps();
+        });
+
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->string('image')->nullable();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+            $table->string('password')->nullable(); // Solo para login con email
+            $table->foreignId('auth_provider_id')->constrained('auth_providers')->onDelete('restrict');
+
+            // 📦 Datos de envío
+            $table->string('phone_number')->nullable();
+            $table->string('address')->nullable();
+            $table->string('city')->nullable();
+            $table->string('region')->nullable();
+            $table->string('zip')->nullable();
+            $table->string('country')->default('PE');
+
             $table->rememberToken();
             $table->timestamps();
         });
@@ -26,15 +44,6 @@ return new class extends Migration
             $table->string('token');
             $table->timestamp('created_at')->nullable();
         });
-
-        Schema::create('sessions', function (Blueprint $table) {
-            $table->string('id')->primary();
-            $table->foreignId('user_id')->nullable()->index();
-            $table->string('ip_address', 45)->nullable();
-            $table->text('user_agent')->nullable();
-            $table->longText('payload');
-            $table->integer('last_activity')->index();
-        });
     }
 
     /**
@@ -42,8 +51,8 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('auth_providers');
         Schema::dropIfExists('users');
         Schema::dropIfExists('password_reset_tokens');
-        Schema::dropIfExists('sessions');
     }
 };
