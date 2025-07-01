@@ -1,4 +1,8 @@
+import Benefits from "@/components/Benefits";
 import Carousel from "@/components/Carousel";
+import Categories from "@/components/Categories";
+import FeaturedProducts from "@/components/FeaturedProducts";
+import Hero from "@/components/Hero";
 import ProductList from "@/features/products/components/public/ProductList";
 import Image from "next/image";
 import Link from "next/link";
@@ -32,9 +36,11 @@ export default async function Home() {
   ]
 
   return (
-    <main className="min-h-screen container mx-auto px-6">
-      <h1 className="text-2xl text-center font-bold my-6 text-gray-800">Compra tus Libros Premiun</h1>
-      <ProductList/>
-    </main>
+    <>
+      <Hero/>
+      <Categories/>
+      <FeaturedProducts/>
+      <Benefits/>
+    </>
   );
 }
